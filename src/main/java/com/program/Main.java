@@ -1,17 +1,55 @@
-package com.program;
+import java.util.ArrayList;
+import java.util.Scanner;
 
-//TIP 코드를 <b>실행</b>하려면 <shortcut actionId="Run"/>을(를) 누르거나
-// 에디터 여백에 있는 <icon src="AllIcons.Actions.Execute"/> 아이콘을 클릭하세요.
 public class Main {
     public static void main(String[] args) {
-        //TIP 캐럿을 강조 표시된 텍스트에 놓고 <shortcut actionId="ShowIntentionActions"/>을(를) 누르면
-        // IntelliJ IDEA이(가) 수정을 제안하는 것을 확인할 수 있습니다.
-        System.out.printf("Hello and welcome!");
+        System.out.println("==명언 앱==");
+        Scanner scanner = new Scanner(System.in);
+        String wiseSayingControl;       // 명령어 입력
+        String wiseSayingContent;       // 명언 입력
+        String wiseSayingAuth;          // 명언 작가
+        int wiseSayingId;               // 명언 아이디 값 > index의 + 1 하여 1부터 시작
+        ArrayList<ArrayList<String>> arrayList1 = new ArrayList<>(); // 중첩 ArrayList 사용
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP <shortcut actionId="Debug"/>을(를) 눌러 코드 디버그를 시작하세요. 1개의 <icon src="AllIcons.Debugger.Db_set_breakpoint"/> 중단점을 설정해 드렸습니다
-            // 언제든 <shortcut actionId="ToggleLineBreakpoint"/>을(를) 눌러 중단점을 더 추가할 수 있습니다.
-            System.out.println("i = " + i);
-        }
+        do {
+            System.out.print("명령) ");
+            wiseSayingControl = inputString();
+            if (wiseSayingControl.equals("등록")) {
+                ArrayList<String> arrayList2 = new ArrayList<>();
+
+                // ID
+                wiseSayingId = arrayList1.size() + 1;
+                arrayList2.add(String.valueOf(wiseSayingId));
+
+                // 작가 입력
+                System.out.print("작가 : ");
+                wiseSayingAuth = inputString();
+                arrayList2.add(wiseSayingAuth);
+
+                // 명언 입력
+                System.out.print("명언 : ");
+                wiseSayingContent = inputString();
+                arrayList2.add(wiseSayingContent);
+
+                // 명언 데이터 추가
+                arrayList1.add(arrayList2);
+            }
+
+            if (wiseSayingControl.equals("목록")) {
+                for (int i = 0; i < arrayList1.size(); i++) {
+                    ArrayList<String> currentWiseSaying = arrayList1.get(i);
+                    System.out.println(
+                            currentWiseSaying.get(0) + " / " + currentWiseSaying.get(1) + " / " + currentWiseSaying.get(2)
+                    );
+                }
+            }
+        } while (!wiseSayingControl.equals("종료"));
+
+        System.out.println("종료되었습니다.");
+    }
+
+    public static String inputString() {
+        Scanner scanner = new Scanner(System.in);
+        return scanner.nextLine();
     }
 }
