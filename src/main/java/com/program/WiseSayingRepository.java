@@ -162,4 +162,11 @@ public class WiseSayingRepository {
         // db/wiseSaying 디렉토리의 모든 JSON 파일을 읽어옴
         files = directory.listFiles((dir, name) -> name.endsWith(".json") && !name.equals("data.json"));
     }
+
+    public void searchKeyWord(String contentType){
+        switch (contentType){
+            case "content&keyword=": break;
+            case "author&keyword=": break;
+        }
+    }
 }
