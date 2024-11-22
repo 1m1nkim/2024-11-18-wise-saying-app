@@ -71,6 +71,7 @@ public class WiseSayingController {
 
                 case "빌드":
                     wsService.buildDataFile();
+                    System.out.println("data.json 파일이 갱신되었습니다.");
                     break;
 
                 case "종료":
