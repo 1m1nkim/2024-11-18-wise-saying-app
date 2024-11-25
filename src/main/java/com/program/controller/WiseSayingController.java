@@ -1,4 +1,7 @@
-package com.program;
+package com.program.controller;
+
+import com.program.service.WiseSayingService;
+import com.program.entity.WiseSaying;
 
 import java.util.List;
 import java.util.Scanner;
@@ -112,3 +115,6 @@ public class WiseSayingController {
         new WiseSayingController().run();
     }
 }
+
+
+

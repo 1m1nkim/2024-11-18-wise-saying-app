@@ -1,8 +1,11 @@
-package com.program;
+package com.program.repository;
+
+import com.program.entity.WiseSaying;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class WiseSayingRepository {
     private static final String DB_DIR = "db/wiseSaying/";
@@ -163,10 +166,10 @@ public class WiseSayingRepository {
         files = directory.listFiles((dir, name) -> name.endsWith(".json") && !name.equals("data.json"));
     }
 
-    public void searchKeyWord(String contentType){
-        switch (contentType){
-            case "content&keyword=": break;
-            case "author&keyword=": break;
-        }
+    public List<WiseSaying> getSearchKeyWords(String wiseSayingContent) {
+        return wiseSayings.stream()
+                .filter(wiseSaying -> wiseSaying.getWiseSay().contains(wiseSayingContent))
+                .collect(Collectors.toList());
     }
+
 }

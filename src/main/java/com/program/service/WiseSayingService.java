@@ -1,4 +1,7 @@
-package com.program;
+package com.program.service;
+
+import com.program.repository.WiseSayingRepository;
+import com.program.entity.WiseSaying;
 
 import java.util.List;
 
@@ -38,4 +41,9 @@ public class WiseSayingService {
     public void buildDataFile() {
         wsRepository.buildDataFile();
     }
+
+    public List<WiseSaying> searchKeyWord(String wiseSayingContent) {
+        return wsRepository.getSearchKeyWords(wiseSayingContent);
+    }
+
 }

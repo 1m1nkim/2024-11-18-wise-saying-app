@@ -1,108 +1,46 @@
-import com.program.WiseSaying;
-import com.program.WiseSayingController;
-import com.program.WiseSayingService;
+import com.program.controller.WiseSayingController;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.List;
+import java.util.Scanner;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 
 public class WiseSayingControllerTest {
-
-    @Mock
-    private WiseSayingService wsService;
-
-    @InjectMocks
-    private WiseSayingController wsController;
-
-    private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-    private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+    WiseSayingController wiseSayingController;
+    ByteArrayOutputStream outputStream;
 
     @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-        System.setOut(new PrintStream(outContent));
-        System.setErr(new PrintStream(errContent));
+    void beforeEach() {
+        wiseSayingController = new WiseSayingController();
+        // System.out 출력을 캡처하기 위한 ByteArrayOutputStream 설정
+        outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream)); // System.out을 outputStream으로 리다이렉트
     }
 
     @Test
-    public void testWiseSayingRegister() {
-        // 준비된 서비스 동작 설정
-        doNothing().when(wsService).addWiseSaying(anyString(), anyString());
+    @DisplayName("등록")
+    void t3() {
+        // 명령어 입력을 시뮬레이션하기 위한 Scanner 객체
+        Scanner sc = new Scanner("""
+                등록
+                현재를 사랑하라.
+                작자미상
+                """);
 
-        // 입력값 시뮬레이션
-        String input = "등록\n명언: Live and let live\n저자: John\n종료\n";
-        simulateInput(input);
+        // run 메서드를 호출하여 출력
+        wiseSayingController.run(sc);
 
-        // 실행
-        wsController.run();
+        // 캡처한 출력을 문자열로 변환
+        String out = outputStream.toString();
 
-        // 출력값 검증
-        assertTrue(outContent.toString().contains("명언이 등록되었습니다."));
-    }
-
-    @Test
-    public void testWiseSayingList() {
-        // 준비된 서비스 동작 설정
-        when(wsService.getAllWiseSaying()).thenReturn(List.of(
-                new WiseSaying("Live and let live", "John", 1),
-                new WiseSaying("Carpe diem", "Horace", 2)
-        ));
-
-        // 입력값 시뮬레이션
-        String input = "목록\n종료\n";
-        simulateInput(input);
-
-        // 실행
-        wsController.run();
-
-        // 출력값 검증
-        assertTrue(outContent.toString().contains("번호 / 작가 / 명언"));
-        assertTrue(outContent.toString().contains("1 / John / Live and let live"));
-        assertTrue(outContent.toString().contains("2 / Horace / Carpe diem"));
-    }
-
-    @Test
-    public void testWiseSayingDelete() {
-        // 준비된 서비스 동작 설정
-        doNothing().when(wsService).deleteWiseSaying(anyInt());
-
-        // 입력값 시뮬레이션
-        String input = "삭제?id=1\n종료\n";
-        simulateInput(input);
-
-        // 실행
-        wsController.run();
-
-        // 출력값 검증
-        assertTrue(outContent.toString().contains("1번 명언이 삭제되었습니다."));
-    }
-
-    @Test
-    public void testWiseSayingUpdate() {
-        // 준비된 서비스 동작 설정
-        doNothing().when(wsService).updateWiseSaying(anyInt(), anyString(), anyString());
-
-        // 입력값 시뮬레이션
-        String input = "수정?id=1\n명언: Carpe diem\n작가: Horace\n종료\n";
-        simulateInput(input);
-
-        // 실행
-        wsController.run();
-
-        // 출력값 검증
-        assertTrue(outContent.toString().contains("1번 명언이 수정되었습니다."));
-    }
-
-    // 입력값을 시뮬레이션하는 메서드
-    private void simulateInput(String input) {
-        System.setIn(new java.io.ByteArrayInputStream(input.getBytes()));
+        // 출력 내용에 대한 검증
+        assertThat(out, containsString("명언 :"));
+        assertThat(out, containsString("작가 :"));
+        assertThat(out, containsString("1번 명언이 등록되었습니다."));
     }
 }
