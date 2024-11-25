@@ -1,38 +1,42 @@
 package com.program.entity;
 
 public class WiseSaying {
-    private final int id;
-    private String content;
+    private String wiseSay;
     private String author;
+    private int index;
 
-    public WiseSaying(int id, String content, String author) {
-        this.id = id;
-        this.content = content;
+    public WiseSaying(String wiseSay, String author, int index) {
+        this.wiseSay = wiseSay;
         this.author = author;
+        this.index = index;
     }
 
-    public int getId() {
-        return id;
+    public String getWiseSay() {
+        return wiseSay;
     }
 
-    public String getContent() {
-        return content;
+    public void setWiseSay(String wiseSay) {
+        this.wiseSay = wiseSay;
     }
 
     public String getAuthor() {
         return author;
     }
 
-    public void setContent(String content) {
-        this.content = content;
-    }
-
     public void setAuthor(String author) {
         this.author = author;
     }
 
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
     @Override
     public String toString() {
-        return "WiseSaying (id=%d, content=\"%s\", author=\"%s\")".formatted(id, content, author);
+        return index + " / " + wiseSay + " / " + author;
     }
 }

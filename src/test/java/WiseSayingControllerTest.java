@@ -19,7 +19,6 @@ public class WiseSayingControllerTest {
         wiseSayingController = new WiseSayingController();
         // System.out 출력을 캡처하기 위한 ByteArrayOutputStream 설정
         outputStream = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outputStream)); // System.out을 outputStream으로 리다이렉트
     }
 
     @Test
@@ -30,6 +29,7 @@ public class WiseSayingControllerTest {
                 등록
                 현재를 사랑하라.
                 작자미상
+                종료
                 """);
 
         // run 메서드를 호출하여 출력
@@ -39,8 +39,9 @@ public class WiseSayingControllerTest {
         String out = outputStream.toString();
 
         // 출력 내용에 대한 검증
-        assertThat(out, containsString("명언 :"));
-        assertThat(out, containsString("작가 :"));
+        assertThat(out, containsString("명언: "));
+        assertThat(out, containsString("작가: "));
         assertThat(out, containsString("1번 명언이 등록되었습니다."));
+        System.setOut(new PrintStream(outputStream)); // System.out을 outputStream으로 리다이렉트
     }
 }

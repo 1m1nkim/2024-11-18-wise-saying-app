@@ -8,9 +8,8 @@ import java.util.Scanner;
 
 public class WiseSayingController {
     private WiseSayingService wsService = new WiseSayingService();
-
-    public void run() {
-        Scanner sc = new Scanner(System.in);
+    private Scanner sc;
+    public void run(Scanner sc) {
         System.out.println("== 명언 앱 ==");
 
         while (true) {
@@ -112,7 +111,8 @@ public class WiseSayingController {
     }
 
     public static void main(String[] args) {
-        new WiseSayingController().run();
+        Scanner sc = new Scanner(System.in);
+        new WiseSayingController().run(sc);
     }
 }
 

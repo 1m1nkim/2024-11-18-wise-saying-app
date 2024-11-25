@@ -5,8 +5,6 @@ import com.program.entity.WiseSaying;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-
 public class WiseSayingRepository {
     private static final String DB_DIR = "db/wiseSaying/";
     private static final String LAST_ID_DIR = DB_DIR + "lastId.txt";
@@ -155,7 +153,7 @@ public class WiseSayingRepository {
             }
             writer.write("\n]"); // JSON 배열 종료
         } catch (IOException e) {
-             e.getMessage();
+            e.getMessage();
         }
     }
 
@@ -165,11 +163,10 @@ public class WiseSayingRepository {
         // db/wiseSaying 디렉토리의 모든 JSON 파일을 읽어옴
         files = directory.listFiles((dir, name) -> name.endsWith(".json") && !name.equals("data.json"));
     }
-
-    public List<WiseSaying> getSearchKeyWords(String wiseSayingContent) {
-        return wiseSayings.stream()
-                .filter(wiseSaying -> wiseSaying.getWiseSay().contains(wiseSayingContent))
-                .collect(Collectors.toList());
+    public void searchKeyWord(String contentType){
+        switch (contentType){
+            case "content&keyword": break;
+            case "author&keyword": break;
+        }
     }
-
 }
