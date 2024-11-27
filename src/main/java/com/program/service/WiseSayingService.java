@@ -1,44 +1,44 @@
 package com.program.service;
 
+
 import com.program.entity.WiseSaying;
+import com.program.repository.WiseSayingMemoryRepository;
 import com.program.repository.WiseSayingRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public class WiseSayingService {
-    private WiseSayingRepository wsRepository = new WiseSayingRepository();
+    private final WiseSayingRepository wiseSayingRepository;
 
-    public void addWiseSaying(String wiseSay, String author) {
-        wsRepository.addWiseSaying(new WiseSaying(wiseSay, author, 0));
+    public WiseSayingService() {
+        this.wiseSayingRepository = new WiseSayingMemoryRepository();
     }
 
-    public List<WiseSaying> getAllWiseSaying() {
-        return wsRepository.getAllWiseSaying();
+    public WiseSaying add(String content, String author) {
+        WiseSaying wiseSaying = new WiseSaying(0, content, author);
+
+        wiseSayingRepository.add(wiseSaying);
+
+        return wiseSaying;
     }
 
-    public WiseSaying getWsByIndex(int index) {
-        return wsRepository.getWsByIndex(index);
+    public List<WiseSaying> findAll() {
+        return wiseSayingRepository.findAll();
     }
 
-    public boolean updateWiseSaying(int index, String newWiseSaying, String newAuthor) {
-        WiseSaying wiseSaying = getWsByIndex(index);
-        if (wiseSaying == null) {
-            return false;
-        }
-        wsRepository.updateWiseSaying(index, newWiseSaying, newAuthor);
-        return true;
+    public boolean removeById(int id) {
+        return wiseSayingRepository.removeById(id);
     }
 
-    public boolean deleteWiseSaying(int index) {
-        WiseSaying wiseSaying = getWsByIndex(index);
-        if (wiseSaying == null) {
-            return false;
-        }
-        wsRepository.deleteWiseSaying(index);
-        return true;
+    public Optional<WiseSaying> findById(int id) {
+        return wiseSayingRepository.findById(id);
     }
 
-    public void buildDataFile() {
-        wsRepository.buildDataFile();
+    public void modify(WiseSaying wiseSaying, String content, String author) {
+        wiseSaying.setContent(content);
+        wiseSaying.setAuthor(author);
+
+        wiseSayingRepository.modify(wiseSaying);
     }
 }

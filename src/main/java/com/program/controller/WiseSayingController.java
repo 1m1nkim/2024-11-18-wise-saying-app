@@ -1,120 +1,107 @@
 package com.program.controller;
 
-import com.program.service.WiseSayingService;
 import com.program.entity.WiseSaying;
+import com.program.service.WiseSayingService;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class WiseSayingController {
-    private WiseSayingService wsService = new WiseSayingService();
-    private Scanner sc;
-    public void run(Scanner sc) {
+    private Scanner scanner;
+    private final WiseSayingService wiseSayingService;
+
+    public WiseSayingController() {
+        wiseSayingService = new WiseSayingService();
+    }
+
+    public void run(Scanner scanner) {
+        this.scanner = scanner;
         System.out.println("== 명언 앱 ==");
 
+        makeSampleData();
+
         while (true) {
-            System.out.print("명령 ) ");
-            String command = sc.next();
+            System.out.print("명령) ");
+            String cmd = scanner.nextLine();
 
-            if (command.startsWith("삭제?id=")) {
-                wiseSayingDelete(sc, command);
-                continue;
-            }
-
-            if (command.startsWith("수정?id=")) {
-                wiseSayingUpdate(sc, command);
-                continue;
-            }
-
-            switch (command) {
-                case "등록":
-                    wiseSayingRegister(sc);
-                    break;
-
-                case "목록":
-                    wiseSayingList();
-                    break;
-
-                case "빌드":
-                    wiseSayingBuild();
-                    break;
-
-                case "종료":
-                    System.out.println("종료되었습니다");
-                    sc.close();
-                    return;
-
-                default:
-                    System.out.println("유효하지 않은 명령입니다.");
+            if (cmd.equals("종료")) {
+                System.out.println("프로그램을 종료합니다.");
+                break;
+            } else if (cmd.equals("등록")) {
+                actionAdd();
+            } else if (cmd.equals("목록")) {
+                actionList();
+            } else if (cmd.startsWith("삭제")) {
+                actionDelete(cmd);
+            } else if (cmd.startsWith("수정")) {
+                actionModify(cmd);
             }
         }
+
+        scanner.close();
     }
 
-    private void wiseSayingDelete(Scanner sc, String command) {
-        String idStr = command.replace("삭제?id=", "");
-        try {
-            int indexDelete = Integer.parseInt(idStr);
-            if (wsService.deleteWiseSaying(indexDelete)) {
-                System.out.println(indexDelete + "번 명언이 삭제되었습니다.");
-            } else {
-                System.out.println(indexDelete + "번 명언은 존재하지 않습니다.");
-            }
-        } catch (NumberFormatException e) {
-            System.out.println("유효하지 않은 번호입니다.");
-        }
+    public void makeSampleData() {
+        wiseSayingService.add("나의 죽음을 적들에게 알리지 말라.", "이순신 장군");
+        wiseSayingService.add("삶이 있는 한 희망은 있다.", "키케로");
     }
 
-    private void wiseSayingUpdate(Scanner sc, String command) {
-        String idStr = command.replace("수정?id=", "");
-        try {
-            int indexUpdate = Integer.parseInt(idStr);
-            WiseSaying existing = wsService.getWsByIndex(indexUpdate);
-            if (existing == null) {
-                System.out.println(indexUpdate + "번 명언은 존재하지 않습니다.");
-                return;
-            }
+    public void actionAdd() {
+        System.out.print("명언 : ");
+        String content = scanner.nextLine();
+        System.out.print("작가 : ");
+        String author = scanner.nextLine();
 
-            System.out.print("명언: ");
-            String wiseSayingUpdate = sc.next();
-            System.out.print("작가: ");
-            String authorUpdate = sc.next();
+        WiseSaying wiseSaying = wiseSayingService.add(content, author);
 
-            if (wsService.updateWiseSaying(indexUpdate, wiseSayingUpdate, authorUpdate)) {
-                System.out.println(indexUpdate + "번 명언이 수정되었습니다.");
-            }
-        } catch (NumberFormatException e) {
-            System.out.println("유효하지 않은 번호입니다.");
-        }
+        System.out.println("%d번 명언이 등록되었습니다.".formatted(wiseSaying.getId()));
     }
 
-    private void wiseSayingRegister(Scanner sc) {
-        System.out.print("명언: ");
-        String wiseSayingSc = sc.next();
-        System.out.print("저자: ");
-        String authorSc = sc.next();
-        wsService.addWiseSaying(wiseSayingSc, authorSc);
-        System.out.println("명언이 등록되었습니다.");
-    }
-
-    private void wiseSayingList() {
+    public void actionList() {
         System.out.println("번호 / 작가 / 명언");
-        System.out.println("-------------------");
-        List<WiseSaying> wiseSayings = wsService.getAllWiseSaying();
-        for (WiseSaying wiseSaying : wiseSayings) {
-            System.out.println(wiseSaying.toString());
+        System.out.println("----------------------");
+
+        List<WiseSaying> wiseSayings = wiseSayingService.findAll();
+
+        for (WiseSaying wiseSaying : wiseSayings.reversed()) {
+            System.out.println("%d / %s / %s".formatted(wiseSaying.getId(), wiseSaying.getAuthor(), wiseSaying.getContent()));
         }
     }
 
-    private void wiseSayingBuild() {
-        wsService.buildDataFile();
-        System.out.println("data.json 파일이 갱신되었습니다.");
+    public void actionDelete(String cmd) {
+        String idStr = cmd.substring(6);
+        int id = Integer.parseInt(idStr);
+
+        boolean removed = wiseSayingService.removeById(id);
+
+        if (removed) System.out.println("%d번 명언을 삭제했습니다.".formatted(id));
+        else System.out.println("%d번 명언은 존재하지 않습니다.".formatted(id));
     }
 
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        new WiseSayingController().run(sc);
+    public void actionModify(String cmd) {
+        String idStr = cmd.substring(6);
+        int id = Integer.parseInt(idStr);
+
+        Optional<WiseSaying> opWiseSaying = wiseSayingService.findById(id);
+
+        if (opWiseSaying.isEmpty()) {
+            System.out.println("%d번 명언은 존재하지 않습니다.".formatted(id));
+            return;
+        }
+
+        WiseSaying foundWiseSaying = opWiseSaying.get();
+
+        System.out.println("명언(기존) : %s".formatted(foundWiseSaying.getContent()));
+        System.out.print("명언 : ");
+        String content = scanner.nextLine();
+
+        System.out.println("작가(기존) : %s".formatted(foundWiseSaying.getAuthor()));
+        System.out.print("작가 : ");
+        String author = scanner.nextLine();
+
+        wiseSayingService.modify(foundWiseSaying, content, author);
+
+        System.out.println("%d번 명언이 수정되었습니다.".formatted(id));
     }
 }
-
-
-
